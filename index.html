@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crafty Planner — The handmade business planner in your pocket</title>
+<meta name="description" content="A maker-built app for tracking orders, customers, expenses, and receipts. Scan a receipt, get a real monthly report, and actually know if your craft business is making money.">
+
+<!-- Open Graph / social share -->
+<meta property="og:title" content="Crafty Planner — Your handmade business, organized">
+<meta property="og:description" content="Tracking orders, scanning receipts, and running the numbers on your craft business. Free to try on Google Play.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tymckinney2222.github.io/Crafty-Planner-Site/">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper:       #f5ede0;
+    --paper-deep:  #ede3d2;
+    --ink:         #2b1f13;
+    --ink-soft:    #4a3a2a;
+    --ink-mute:    #7a6855;
+    --amber:       #c4956a;
+    --amber-deep:  #a0754a;
+    --amber-dark:  #7a5233;
+    --sage:        #8fa884;
+    --rose:        #c58b7c;
+    --cream:       #faf5eb;
+    --border:      #d4c5b0;
+    --border-soft: #e4d9c4;
+    --shadow-sm:   0 1px 3px rgba(74, 58, 42, 0.08);
+    --shadow-md:   0 8px 24px rgba(74, 58, 42, 0.10);
+    --shadow-lg:   0 20px 50px rgba(74, 58, 42, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    /* Subtle paper texture using layered radial gradients */
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(196,149,106,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 60%, rgba(143,168,132,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 95%, rgba(197,139,124,0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  a { color: var(--amber-deep); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--amber-dark); }
+
+  img { max-width: 100%; display: block; }
+
+  .accent-script {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    color: var(--amber-deep);
+    font-size: 1.25em;
+    line-height: 1;
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(245, 237, 224, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  nav.scrolled { border-bottom-color: var(--border-soft); }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .nav-logo-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-deep) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    font-size: 15px;
+  }
+  .nav-links a {
+    color: var(--ink-soft);
+    font-family: 'Newsreader', serif;
+  }
+  .nav-cta {
+    background: var(--ink);
+    color: var(--cream) !important;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .nav-cta:hover { background: var(--amber-dark); transform: translateY(-1px); color: var(--cream) !important; }
+
+  @media (max-width: 700px) {
+    .nav-links a:not(.nav-cta) { display: none; }
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero { padding: 40px 0 40px; }
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(196, 149, 106, 0.12);
+    color: var(--amber-dark);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 24px;
+    font-family: 'Newsreader', serif;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--amber);
+    border-radius: 50%;
+  }
+
+  h1.hero-title {
+    font-size: clamp(38px, 6vw, 68px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber-dark);
+  }
+  .hero-title .underline-hand {
+    display: inline-block;
+    position: relative;
+  }
+  .hero-title .underline-hand::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: -3%;
+    width: 106%;
+    height: 10px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10'><path d='M1 6 Q 30 1, 60 5 T 119 4' stroke='%23c4956a' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .hero-sub {
+    font-size: clamp(17px, 2vw, 20px);
+    color: var(--ink-soft);
+    max-width: 500px;
+    margin-bottom: 36px;
+    line-height: 1.55;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .btn-play {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 16px 26px;
+    border-radius: 14px;
+    font-family: 'Newsreader', serif;
+    font-size: 16px;
+    font-weight: 500;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+    box-shadow: var(--shadow-md);
+  }
+  .btn-play:hover {
+    background: var(--amber-dark);
+    color: var(--cream);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  .btn-play svg { width: 22px; height: 22px; }
+  .btn-play .btn-sub {
+    font-size: 11px;
+    opacity: 0.8;
+    display: block;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 1px;
+  }
+  .btn-play .btn-main {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-freenote {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: var(--amber-deep);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-trust {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-soft);
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--ink-mute);
+  }
+  .hero-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .hero-trust-item svg {
+    width: 16px; height: 16px; color: var(--sage);
+    flex-shrink: 0;
+  }
+
+  /* Hero phone */
+  .hero-phone-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .phone {
+    position: relative;
+    width: 290px;
+    height: 580px;
+    background: #2b1f13;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 24px;
+    background: #2b1f13;
+    border-radius: 0 0 18px 18px;
+    z-index: 3;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    background: var(--cream);
+    position: relative;
+  }
+  .phone-screen img.real-screen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  /* Decorative elements around hero phone */
+  .hero-sparkle {
+    position: absolute;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    color: var(--amber-deep);
+    font-size: 20px;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeInUp 0.8s 0.8s forwards;
+  }
+  .hero-sparkle-1 {
+    top: 8%; left: -10px;
+    transform: rotate(-8deg);
+  }
+  .hero-sparkle-2 {
+    bottom: 15%; right: -4px;
+    transform: rotate(7deg);
+    color: var(--sage);
+  }
+  @media (max-width: 900px) {
+    .hero-sparkle { display: none; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px) var(--rot, rotate(0)); }
+    to { opacity: 1; }
+  }
+
+  /* Mock app screen in hero phone */
+  .app-mock {
+    position: relative;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    height: 100%;
+  }
+  .app-mock-header {
+    background: #3d2d1d;
+    color: var(--cream);
+    padding: 44px 20px 16px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .app-mock-body {
+    padding: 20px 16px;
+    background: var(--paper);
+    height: calc(100% - 82px);
+    overflow: hidden;
+  }
+  .app-mock-title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .app-mock-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .app-mock-stat {
+    background: var(--cream);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+  }
+  .app-mock-stat-label {
+    font-size: 10px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .app-mock-stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .app-mock-stat.green .app-mock-stat-value { color: #5a8559; }
+  .app-mock-stat.amber .app-mock-stat-value { color: var(--amber-dark); }
+  .app-mock-order {
+    background: var(--cream);
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .app-mock-order-name { font-weight: 600; margin-bottom: 2px; font-size: 13px;}
+  .app-mock-order-item { color: var(--ink-mute); font-size: 11px; }
+  .app-mock-order-price { font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; color: var(--amber-dark);}
+  .app-mock-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pill-sage { background: rgba(143,168,132,0.18); color: #4d6c46;}
+  .pill-amber { background: rgba(196,149,106,0.22); color: var(--amber-dark);}
+
+  /* ─── SECTION DIVIDERS ─── */
+  .section {
+    padding: 110px 0;
+    position: relative;
+  }
+  @media (max-width: 700px) { .section { padding: 70px 0; } }
+
+  .section-eyebrow {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: var(--amber-deep);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: clamp(32px, 4.5vw, 52px);
+    max-width: 720px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .section-title em { font-style: italic; color: var(--amber-dark); font-weight: 400;}
+  .section-lead {
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin-bottom: 60px;
+  }
+
+  /* ─── FEATURES ─── */
+  .features {
+    background: var(--paper-deep);
+    position: relative;
+  }
+  .features::before, .features::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background-image:
+      radial-gradient(circle at 50% 0%, var(--paper) 12px, transparent 13px);
+    background-size: 40px 40px;
+    background-repeat: repeat-x;
+  }
+  .features::before { top: -1px; }
+  .features::after { bottom: -1px; transform: rotate(180deg); }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .feature-card {
+    background: var(--cream);
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 28px 26px;
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+  .feature-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 18px;
+    background: linear-gradient(135deg, rgba(196,149,106,0.15), rgba(196,149,106,0.05));
+    border: 1px solid rgba(196,149,106,0.2);
+  }
+  .feature-card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    letter-spacing: -0.015em;
+  }
+  .feature-card-desc {
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .feature-card.pro {
+    background: linear-gradient(135deg, #3d2d1d 0%, #2b1f13 100%);
+    color: var(--cream);
+    border-color: var(--amber-dark);
+  }
+  .feature-card.pro .feature-card-title { color: var(--cream); }
+  .feature-card.pro .feature-card-desc { color: rgba(250, 245, 235, 0.75); }
+  .feature-card.pro .feature-card-icon {
+    background: rgba(196,149,106,0.2);
+    border-color: rgba(196,149,106,0.35);
+  }
+  .pro-tag {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--amber);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── FOUNDER STORY ─── */
+  .story {
+    background: var(--cream);
+    position: relative;
+  }
+  .story-text p {
+    font-size: 19px;
+    line-height: 1.7;
+    margin-bottom: 22px;
+    color: var(--ink-soft);
+  }
+  .story-text p:first-of-type::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 68px;
+    float: left;
+    line-height: 0.85;
+    padding: 8px 10px 0 0;
+    font-weight: 600;
+    color: var(--amber-dark);
+  }
+  .story-sig {
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    color: var(--amber-deep);
+    margin-top: 24px;
+  }
+  .story-sig-title {
+    display: block;
+    font-family: 'Newsreader', serif;
+    font-size: 14px;
+    color: var(--ink-mute);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* ─── SCREENSHOT CAROUSEL ─── */
+  .screens {
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .screens-header {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 60px;
+  }
+  .screens-header .section-title { margin: 0 auto 20px; }
+  .screens-header .section-lead { margin: 0 auto; }
+
+  .carousel {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .carousel-viewport {
+    overflow: hidden;
+    padding: 20px 0 30px;
+  }
+  .carousel-track {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.5s cubic-bezier(.2,.8,.25,1);
+    will-change: transform;
+  }
+  .carousel-card {
+    flex: 0 0 auto;
+    width: 290px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    transition: transform 0.4s, opacity 0.4s;
+    opacity: 0.4;
+    transform: scale(0.88);
+  }
+  .carousel-card.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .carousel-card .phone {
+    margin-bottom: 20px;
+  }
+  .carousel-caption {
+    text-align: center;
+    max-width: 280px;
+  }
+  .carousel-caption-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .carousel-caption-sub {
+    font-size: 14px;
+    color: var(--ink-mute);
+    line-height: 1.45;
+  }
+
+  .carousel-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin-top: 12px;
+  }
+  .carousel-arrow {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, border-color 0.2s;
+  }
+  .carousel-arrow:hover {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+    transform: translateY(-1px);
+  }
+  .carousel-arrow:active { transform: translateY(0); }
+  .carousel-arrow svg { width: 20px; height: 20px; }
+
+  .carousel-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+  }
+  .carousel-dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--amber-dark);
+  }
+
+  /* Variant app mock screens for the carousel */
+  .mock-section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .mock-chart {
+    background: var(--cream);
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+    padding: 14px;
+    margin-bottom: 12px;
+    height: 120px;
+    position: relative;
+  }
+  .mock-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 78px;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .mock-bar {
+    flex: 1;
+    background: linear-gradient(to top, var(--amber), var(--amber-deep));
+    border-radius: 4px 4px 0 0;
+    max-width: 22px;
+  }
+  .mock-bar.alt {
+    background: linear-gradient(to top, #8fa884, #6b8a62);
+  }
+  .mock-bar-labels {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 4px;
+    font-size: 9px;
+    color: var(--ink-mute);
+  }
+  .mock-receipt {
+    background: var(--cream);
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .mock-receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .mock-receipt-store {
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .mock-receipt-date {
+    font-size: 10px;
+    color: var(--ink-mute);
+  }
+  .mock-receipt-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 5px;
+  }
+  .mock-receipt-line strong { font-weight: 600; }
+  .mock-receipt-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1.5px solid var(--ink);
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .mock-price-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--cream);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .mock-price-field strong {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--amber-dark);
+  }
+  .mock-price-result {
+    background: linear-gradient(135deg, rgba(196,149,106,0.18), rgba(196,149,106,0.08));
+    border: 1px solid rgba(196,149,106,0.35);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .mock-price-result-label {
+    font-size: 10px;
+    color: var(--amber-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .mock-price-result-value {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .mock-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    font-size: 11px;
+  }
+  .mock-cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cream);
+    border-radius: 6px;
+    position: relative;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .mock-cal-day.has-order {
+    background: rgba(196,149,106,0.2);
+    color: var(--amber-dark);
+    font-weight: 700;
+  }
+  .mock-cal-day.has-order::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--amber-dark);
+  }
+  .mock-cal-day.today {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .mock-cal-header {
+    text-align: center;
+    font-size: 9px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    padding: 4px 0;
+  }
+
+  /* ─── MAKE IT YOURS (Theme comparison) ─── */
+  .theming {
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+  .theming-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .theming-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .theming-text {
+    position: relative;
+  }
+  .theming-text .section-lead { margin-bottom: 24px; }
+
+  .theming-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+  }
+  .theming-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 16px;
+    color: var(--ink-soft);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .theming-bullets li:last-child { border-bottom: none; }
+  .theming-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1.5px rgba(0,0,0,0.08), var(--shadow-sm);
+  }
+  .sw-amber { background: #c4956a; }
+  .sw-sage { background: #8fa884; }
+  .sw-rose { background: #c58b7c; }
+  .sw-navy { background: #3d4a6a; }
+  .sw-purple { background: #a855f7; }
+
+  .theming-phones {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .theming-phones .phone {
+    transform-origin: center center;
+  }
+  .theming-phones .phone.light {
+    transform: rotate(-4deg) translateY(10px);
+    margin-right: -30px;
+    z-index: 1;
+    width: 240px;
+    height: 480px;
+  }
+  .theming-phones .phone.dark {
+    transform: rotate(3deg);
+    z-index: 2;
+    width: 240px;
+    height: 480px;
+  }
+  @media (max-width: 900px) {
+    .theming-phones .phone.light,
+    .theming-phones .phone.dark {
+      transform: none;
+      margin: 0;
+      width: 230px;
+      height: 460px;
+    }
+  }
+
+  /* Dark-theme variant of the app mock */
+  .app-mock-dark {
+    background: #0f0f12;
+    color: #e8e4dd;
+    height: 100%;
+  }
+  .app-mock-dark .app-mock-header {
+    /* Custom header color to show theme personalization */
+    background: #3d4a6a;
+    color: #fff;
+  }
+  .app-mock-dark .app-mock-body {
+    background: #1a1a1e;
+  }
+  .app-mock-dark .app-mock-title { color: #f4f1ea; }
+  .app-mock-dark .app-mock-stat {
+    background: #24242a;
+    border-color: #2e2e36;
+  }
+  .app-mock-dark .app-mock-stat-label { color: #a0998a; }
+  .app-mock-dark .app-mock-stat.green .app-mock-stat-value { color: #a3c89a; }
+  .app-mock-dark .app-mock-stat.amber .app-mock-stat-value { color: #d4a880; }
+  .app-mock-dark .app-mock-order {
+    background: #24242a;
+    border-color: #2e2e36;
+    color: #e8e4dd;
+  }
+  .app-mock-dark .app-mock-order-item { color: #8a8474; }
+  .app-mock-dark .app-mock-order-price { color: #d4a880; }
+
+  .theming-label {
+    position: absolute;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 22px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .theming-label-light {
+    top: -10px;
+    left: 4%;
+    color: var(--amber-deep);
+    transform: rotate(-8deg);
+  }
+  .theming-label-dark {
+    bottom: -20px;
+    right: 6%;
+    color: #9333ea;
+    transform: rotate(6deg);
+  }
+  .theming-label::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 24px;
+    border: 2px solid currentColor;
+    border-right: none;
+    border-top: none;
+    border-radius: 0 0 0 20px;
+    left: -40px;
+    top: 50%;
+    opacity: 0.7;
+  }
+  .theming-label-dark::before {
+    right: -40px;
+    left: auto;
+    border-right: 2px solid currentColor;
+    border-left: none;
+    border-radius: 0 0 20px 0;
+  }
+  @media (max-width: 900px) { .theming-label { display: none; } }
+
+  /* ─── BUILT IN PUBLIC ─── */
+  .public {
+    background: var(--paper);
+    text-align: center;
+  }
+  .public-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+    max-width: 780px;
+    margin: 40px auto 36px;
+  }
+  .public-stat {
+    background: var(--cream);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 24px 20px;
+  }
+  .public-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    font-weight: 600;
+    color: var(--amber-dark);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .public-stat-label {
+    font-size: 14px;
+    color: var(--ink-mute);
+  }
+  .public-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-family: 'Newsreader', serif;
+    font-size: 15px;
+    font-weight: 500;
+    margin-top: 12px;
+  }
+  .public-link:hover { background: var(--amber-dark); color: var(--cream); }
+  .public-link svg { width: 20px; height: 20px; }
+
+  /* ─── EARLY INVITE ─── */
+  .invite {
+    background: linear-gradient(135deg, #3d2d1d 0%, #2b1f13 100%);
+    color: var(--cream);
+    text-align: center;
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .invite::before, .invite::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+  }
+  .invite::before {
+    background: rgba(196,149,106,0.18);
+    top: -200px; left: -200px;
+  }
+  .invite::after {
+    background: rgba(197,139,124,0.14);
+    bottom: -200px; right: -200px;
+  }
+  .invite .section-eyebrow { color: var(--amber); }
+  .invite h2 {
+    color: var(--cream);
+    font-size: clamp(32px, 4.5vw, 48px);
+    max-width: 720px;
+    margin: 0 auto 24px;
+  }
+  .invite p {
+    color: rgba(250, 245, 235, 0.82);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    font-size: 18px;
+    position: relative;
+  }
+  .invite .btn-play {
+    background: var(--cream);
+    color: var(--ink);
+    position: relative;
+    z-index: 2;
+  }
+  .invite .btn-play:hover { background: var(--amber); color: var(--ink);}
+
+  /* ─── FAQ ─── */
+  .faq {
+    background: var(--paper);
+  }
+  .faq-list {
+    max-width: 760px;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border-soft);
+    padding: 24px 0;
+    cursor: pointer;
+  }
+  .faq-q {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    letter-spacing: -0.01em;
+  }
+  .faq-toggle {
+    width: 28px; height: 28px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    position: relative;
+    transition: transform 0.25s, background 0.2s;
+  }
+  .faq-toggle::before, .faq-toggle::after {
+    content: '';
+    position: absolute;
+    background: var(--ink);
+    top: 50%; left: 50%;
+    transition: all 0.25s;
+  }
+  .faq-toggle::before {
+    width: 12px; height: 1.5px;
+    transform: translate(-50%, -50%);
+  }
+  .faq-toggle::after {
+    width: 1.5px; height: 12px;
+    transform: translate(-50%, -50%);
+  }
+  .faq-item.open .faq-toggle {
+    background: var(--ink);
+    transform: rotate(45deg);
+  }
+  .faq-item.open .faq-toggle::before,
+  .faq-item.open .faq-toggle::after { background: var(--cream); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease-out;
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .faq-a-inner { padding-top: 16px; }
+  .faq-item.open .faq-a { max-height: 260px; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--ink);
+    color: rgba(250, 245, 235, 0.6);
+    padding: 60px 0 36px;
+    font-size: 14px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 44px;
+  }
+  @media (max-width: 700px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  }
+  footer .nav-logo { color: var(--cream); margin-bottom: 12px; }
+  footer p { max-width: 360px; line-height: 1.6; }
+  footer h4 {
+    font-family: 'Fraunces', serif;
+    color: var(--cream);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  footer ul { list-style: none; }
+  footer ul li { margin-bottom: 8px; }
+  footer a { color: rgba(250,245,235,0.7); }
+  footer a:hover { color: var(--amber); }
+  .footer-bottom {
+    border-top: 1px solid rgba(250,245,235,0.1);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Hero intrinsic reveal on load */
+  .hero .eyebrow,
+  .hero h1,
+  .hero .hero-sub,
+  .hero .hero-cta-row,
+  .hero .hero-trust {
+    opacity: 0;
+    animation: heroIn 0.7s forwards;
+  }
+  .hero .eyebrow { animation-delay: 0.1s; }
+  .hero h1 { animation-delay: 0.2s; }
+  .hero .hero-sub { animation-delay: 0.35s; }
+  .hero .hero-cta-row { animation-delay: 0.5s; }
+  .hero .hero-trust { animation-delay: 0.7s; }
+  .hero .hero-phone-wrap {
+    opacity: 0;
+    animation: phoneIn 0.9s 0.25s forwards;
+  }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes phoneIn {
+    from { opacity: 0; transform: translateY(30px) rotate(-2deg); }
+    to   { opacity: 1; transform: rotate(-1.5deg); }
+  }
+  .hero-phone-wrap { transform: rotate(-1.5deg); }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-icon">📋</span>
+      Crafty Planner
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#story">Story</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://play.google.com/store/apps/details?id=com.craftyplanner.app" class="nav-cta">Get the app</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow">A maker-built planner for maker-run businesses</div>
+      <h1 class="hero-title">
+        Run your handmade business <em>like you mean it</em> —
+        <span class="underline-hand">right from your phone.</span>
+      </h1>
+      <p class="hero-sub">
+        Track orders, scan receipts, and finally find out if your craft hustle is making money. No spreadsheets. No laptop. No guessing.
+      </p>
+      <div class="hero-cta-row">
+        <a href="https://play.google.com/store/apps/details?id=com.craftyplanner.app" class="btn-play">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.609 1.814L13.792 12 3.61 22.186c-.375-.31-.624-.78-.624-1.31V3.124c0-.53.25-1 .624-1.31zm10.89 10.186l2.684 2.684-9.916 5.743L14.5 12zM6.267 1.573l9.916 5.743-2.684 2.684-9.916-5.743zM20.16 10.81c.625.36.625 1.67 0 2.03l-2.793 1.617L14.5 12l2.867-2.457z"/>
+          </svg>
+          <span>
+            <span class="btn-sub">Get it on</span>
+            <span class="btn-main">Google Play</span>
+          </span>
+        </a>
+        <div class="hero-freenote">
+          ← Free to try, no sign-up
+        </div>
+      </div>
+      <div class="hero-trust">
+        <div class="hero-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          Works offline
+        </div>
+        <div class="hero-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          Your data, your phone
+        </div>
+        <div class="hero-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          Built by one developer
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-phone-wrap">
+      <span class="hero-sparkle hero-sparkle-1">made with care ↓</span>
+      <span class="hero-sparkle hero-sparkle-2">~ designed for makers</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="app-mock">
+            <div class="app-mock-header">
+              <span>📋</span> Crafty Planner
+            </div>
+            <div class="app-mock-body">
+              <div class="app-mock-title">📋 Orders</div>
+              <div class="app-mock-stats">
+                <div class="app-mock-stat green">
+                  <div class="app-mock-stat-label">Revenue</div>
+                  <div class="app-mock-stat-value">$2,840</div>
+                </div>
+                <div class="app-mock-stat amber">
+                  <div class="app-mock-stat-label">Active</div>
+                  <div class="app-mock-stat-value">7</div>
+                </div>
+              </div>
+              <div class="app-mock-order">
+                <div>
+                  <div class="app-mock-order-name">Sarah M.</div>
+                  <div class="app-mock-order-item">3× Lavender candles</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="app-mock-order-price">$48</div>
+                  <span class="app-mock-pill pill-sage">Delivered</span>
+                </div>
+              </div>
+              <div class="app-mock-order">
+                <div>
+                  <div class="app-mock-order-name">Rae T.</div>
+                  <div class="app-mock-order-item">Custom crochet beanie</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="app-mock-order-price">$65</div>
+                  <span class="app-mock-pill pill-amber">In progress</span>
+                </div>
+              </div>
+              <div class="app-mock-order">
+                <div>
+                  <div class="app-mock-order-name">Em ·</div>
+                  <div class="app-mock-order-item">Wedding favor set</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="app-mock-order-price">$180</div>
+                  <span class="app-mock-pill pill-amber">In progress</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="section features" id="features">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">What it does</div>
+      <h2 class="section-title">Everything your spreadsheet does — <em>and the things it can't.</em></h2>
+      <p class="section-lead">
+        Built for real makers selling on Etsy, Facebook, craft fairs, or straight from their own kitchen table. Five free orders to try it out. No sign-up. No credit card. No kidding.
+      </p>
+    </div>
+    <div class="feature-grid reveal">
+      <div class="feature-card">
+        <div class="feature-card-icon">📋</div>
+        <div class="feature-card-title">Orders, organized</div>
+        <p class="feature-card-desc">Track every order from "ordered" through "delivered." Filter by platform, status, or customer. See what's overdue at a glance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">💰</div>
+        <div class="feature-card-title">Know your profit</div>
+        <p class="feature-card-desc">Revenue minus materials minus that Michaels run equals what's actually yours. The math your spreadsheet won't do.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">💲</div>
+        <div class="feature-card-title">Price calculator</div>
+        <p class="feature-card-desc">Materials, time, overhead, margin — plug them in, never underprice your work again. Free for everyone.</p>
+      </div>
+      <div class="feature-card pro">
+        <span class="pro-tag">PRO</span>
+        <div class="feature-card-icon">📷</div>
+        <div class="feature-card-title">Scan your receipts</div>
+        <p class="feature-card-desc">Snap a photo of any receipt — AI pulls the items, categorizes them, logs the expense. Tax time stops being terrible.</p>
+      </div>
+      <div class="feature-card pro">
+        <span class="pro-tag">PRO</span>
+        <div class="feature-card-icon">📊</div>
+        <div class="feature-card-title">Real analytics</div>
+        <p class="feature-card-desc">Customer retention, AOV, margin trends, best month, best product. The dashboards you'd need an accountant for.</p>
+      </div>
+      <div class="feature-card pro">
+        <span class="pro-tag">PRO</span>
+        <div class="feature-card-icon">☁️</div>
+        <div class="feature-card-title">Sync across devices</div>
+        <p class="feature-card-desc">Phone, tablet, or grabbing a friend's laptop. Sign in once, your whole business follows you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">🏪</div>
+        <div class="feature-card-title">Your brand, baked in</div>
+        <p class="feature-card-desc">Add your business name, logo, and colors. Pick your own accent — invoices, reports, even the app header match your vibe.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">⚡</div>
+        <div class="feature-card-title">Updates that actually ship</div>
+        <p class="feature-card-desc">Built as a single file that deploys in seconds — so when a user requests something, it can ship the same week. No enterprise release cycle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREENSHOTS CAROUSEL ─── -->
+<section class="section screens">
+  <div class="container">
+    <div class="screens-header reveal">
+      <div class="section-eyebrow">See it in action</div>
+      <h2 class="section-title">A tour through <em>the whole thing.</em></h2>
+      <p class="section-lead">Swipe or tap through the screens below. This is the actual app — no marketing mockups, no "coming soon."</p>
+    </div>
+
+    <div class="carousel reveal" id="carousel">
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="carouselTrack">
+
+          <!-- SCREEN 1: Orders -->
+          <div class="carousel-card">
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="app-mock">
+                  <div class="app-mock-header"><span>📋</span> Crafty Planner</div>
+                  <div class="app-mock-body">
+                    <div class="app-mock-title">📋 Orders</div>
+                    <div class="app-mock-stats">
+                      <div class="app-mock-stat green">
+                        <div class="app-mock-stat-label">Revenue</div>
+                        <div class="app-mock-stat-value">$2,840</div>
+                      </div>
+                      <div class="app-mock-stat amber">
+                        <div class="app-mock-stat-label">Active</div>
+                        <div class="app-mock-stat-value">7</div>
+                      </div>
+                    </div>
+                    <div class="app-mock-order">
+                      <div>
+                        <div class="app-mock-order-name">Sarah M.</div>
+                        <div class="app-mock-order-item">3× Lavender candles</div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="app-mock-order-price">$48</div>
+                        <span class="app-mock-pill pill-sage">Delivered</span>
+                      </div>
+                    </div>
+                    <div class="app-mock-order">
+                      <div>
+                        <div class="app-mock-order-name">Rae T.</div>
+                        <div class="app-mock-order-item">Custom crochet beanie</div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="app-mock-order-price">$65</div>
+                        <span class="app-mock-pill pill-amber">In progress</span>
+                      </div>
+                    </div>
+                    <div class="app-mock-order">
+                      <div>
+                        <div class="app-mock-order-name">Em ·</div>
+                        <div class="app-mock-order-item">Wedding favor set</div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="app-mock-order-price">$180</div>
+                        <span class="app-mock-pill pill-amber">In progress</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-caption">
+              <div class="carousel-caption-title">Orders, organized</div>
+              <div class="carousel-caption-sub">Every order from "ordered" to "delivered" — filter, search, never lose one again.</div>
+            </div>
+          </div>
+
+          <!-- SCREEN 2: Dashboard (real screenshot) -->
+          <div class="carousel-card">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="images/dashboard.png" alt="Crafty Planner Dashboard" class="real-screen" loading="lazy">
+              </div>
+            </div>
+            <div class="carousel-caption">
+              <div class="carousel-caption-title">Your numbers, finally</div>
+              <div class="carousel-caption-sub">Revenue, expenses, profit, trends — the math your spreadsheet refused to do.</div>
+            </div>
+          </div>
+
+          <!-- SCREEN 3: Price Calculator -->
+          <div class="carousel-card">
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="app-mock">
+                  <div class="app-mock-header"><span>💲</span> Price Calculator</div>
+                  <div class="app-mock-body">
+                    <div class="mock-section-title">Your inputs</div>
+                    <div class="mock-price-field">
+                      <span>Materials</span>
+                      <strong>$4.80</strong>
+                    </div>
+                    <div class="mock-price-field">
+                      <span>Time (1.5h × $18)</span>
+                      <strong>$27.00</strong>
+                    </div>
+                    <div class="mock-price-field">
+                      <span>Overhead</span>
+                      <strong>$3.20</strong>
+                    </div>
+                    <div class="mock-price-field">
+                      <span>Margin</span>
+                      <strong>40%</strong>
+                    </div>
+                    <div class="mock-price-result">
+                      <div class="mock-price-result-label">Charge at least</div>
+                      <div class="mock-price-result-value">$52</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-caption">
+              <div class="carousel-caption-title">Price calculator</div>
+              <div class="carousel-caption-sub">Materials, time, overhead, margin — never underprice your work again. Free for everyone.</div>
+            </div>
+          </div>
+
+          <!-- SCREEN 4: Expenses + Scanner entry point (real screenshot) -->
+          <div class="carousel-card">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="images/expenses.png" alt="Crafty Planner Expenses" class="real-screen" loading="lazy">
+              </div>
+            </div>
+            <div class="carousel-caption">
+              <div class="carousel-caption-title">Expenses &amp; AI scanner</div>
+              <div class="carousel-caption-sub">Log expenses by category, or snap a receipt and let AI pull the items. Tax time stops being terrible.</div>
+            </div>
+          </div>
+
+          <!-- SCREEN 5: Calendar (real screenshot) -->
+          <div class="carousel-card">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="images/calendar.png" alt="Crafty Planner Calendar" class="real-screen" loading="lazy">
+              </div>
+            </div>
+            <div class="carousel-caption">
+              <div class="carousel-caption-title">Calendar view</div>
+              <div class="carousel-caption-sub">See what's due, what's overdue, and what's coming up — straight from your month-at-a-glance.</div>
+            </div>
+          </div>
+
+          <!-- SCREEN 6: Customer Profile -->
+          <div class="carousel-card">
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="app-mock">
+                  <div class="app-mock-header"><span>👥</span> Customer</div>
+                  <div class="app-mock-body">
+                    <div style="background: linear-gradient(135deg, rgba(196,149,106,0.18), rgba(196,149,106,0.06)); border-radius: 12px; padding: 16px; margin-bottom: 14px; text-align: center;">
+                      <div style="width: 54px; height: 54px; border-radius: 50%; background: var(--amber-deep); color: white; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin: 0 auto 8px;">SM</div>
+                      <div style="font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; margin-bottom: 2px;">Sarah M.</div>
+                      <div style="font-size: 11px; color: var(--ink-mute);">Customer since Jan 2026</div>
+                    </div>
+                    <div class="app-mock-stats" style="margin-bottom: 12px;">
+                      <div class="app-mock-stat green">
+                        <div class="app-mock-stat-label">Spent</div>
+                        <div class="app-mock-stat-value">$386</div>
+                      </div>
+                      <div class="app-mock-stat amber">
+                        <div class="app-mock-stat-label">Orders</div>
+                        <div class="app-mock-stat-value">8</div>
+                      </div>
+                    </div>
+                    <div class="mock-section-title" style="font-size: 12px;">Recent</div>
+                    <div class="app-mock-order">
+                      <div>
+                        <div class="app-mock-order-name">3× Lavender candles</div>
+                        <div class="app-mock-order-item">Apr 12, 2026</div>
+                      </div>
+                      <div class="app-mock-order-price" style="font-size: 13px;">$48</div>
+                    </div>
+                    <div class="app-mock-order">
+                      <div>
+                        <div class="app-mock-order-name">Gift set — spring</div>
+                        <div class="app-mock-order-item">Mar 28, 2026</div>
+                      </div>
+                      <div class="app-mock-order-price" style="font-size: 13px;">$95</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-caption">
+              <div class="carousel-caption-title">Know your customers</div>
+              <div class="carousel-caption-sub">Order history, total spend, last purchase — the repeat-buyer intel that builds real relationships.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="carousel-controls">
+        <button class="carousel-arrow" id="carouselPrev" aria-label="Previous screen">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <button class="carousel-arrow" id="carouselNext" aria-label="Next screen">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MAKE IT YOURS (Theme comparison) ─── -->
+<section class="section theming">
+  <div class="container">
+    <div class="theming-grid">
+      <div class="theming-text reveal">
+        <div class="section-eyebrow">Make it yours</div>
+        <h2 class="section-title" style="margin-bottom: 20px;">Your app, <em>your aesthetic.</em></h2>
+        <p class="section-lead">Light mode, dark mode, or something in between. Pick a header color that matches your brand. Upload your logo. Your shop's vibe shows up everywhere — even the app bar.</p>
+        <ul class="theming-bullets">
+          <li>
+            <span class="theming-swatch sw-amber"></span>
+            <span><strong style="color: var(--ink);">Custom accent color</strong> — one tap changes the app from warm amber to sage green to dusty rose to whatever you want.</span>
+          </li>
+          <li>
+            <span class="theming-swatch sw-purple"></span>
+            <span><strong style="color: var(--ink);">Custom header &amp; accent</strong> — pick a hue that matches your logo. Every button, every header, every icon follows.</span>
+          </li>
+          <li>
+            <span class="theming-swatch" style="background: linear-gradient(135deg, #f5ede0 50%, #0f0f12 50%);"></span>
+            <span><strong style="color: var(--ink);">Light or dark</strong> — for craft-fair sun or late-night order catch-ups.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="theming-phones reveal">
+        <span class="theming-label theming-label-light">Classic warm</span>
+        <div class="phone light">
+          <div class="phone-screen">
+            <div class="app-mock">
+              <div class="app-mock-header"><span>📋</span> Tyriah Products</div>
+              <div class="app-mock-body">
+                <div class="app-mock-title" style="font-size: 22px;">📋 Orders</div>
+                <div class="app-mock-stats">
+                  <div class="app-mock-stat green">
+                    <div class="app-mock-stat-label">Revenue</div>
+                    <div class="app-mock-stat-value">$2,840</div>
+                  </div>
+                  <div class="app-mock-stat amber">
+                    <div class="app-mock-stat-label">Active</div>
+                    <div class="app-mock-stat-value">7</div>
+                  </div>
+                </div>
+                <div class="app-mock-order">
+                  <div>
+                    <div class="app-mock-order-name">Sarah M.</div>
+                    <div class="app-mock-order-item">3× Lavender candles</div>
+                  </div>
+                  <div class="app-mock-order-price" style="font-size: 14px;">$48</div>
+                </div>
+                <div class="app-mock-order">
+                  <div>
+                    <div class="app-mock-order-name">Rae T.</div>
+                    <div class="app-mock-order-item">Custom crochet beanie</div>
+                  </div>
+                  <div class="app-mock-order-price" style="font-size: 14px;">$65</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone dark">
+          <div class="phone-screen">
+            <img src="images/menu-purple.png" alt="Crafty Planner with custom purple theme" class="real-screen" loading="lazy">
+          </div>
+        </div>
+        <span class="theming-label theming-label-dark">Bold purple, custom</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STORY ─── -->
+<section class="section story" id="story">
+  <div class="container">
+    <div class="story-text reveal" style="max-width: 720px; margin: 0 auto;">
+      <div class="section-eyebrow" style="text-align: center;">A true story</div>
+      <h2 class="section-title" style="margin: 0 auto 40px; text-align: center;">Built for my sister <em>(and her purse calendar)</em></h2>
+      <p>
+        My sister runs a handmade business. For years, her entire operation lived in a coil-bound planner she carried in her purse — orders in the margins, receipts crammed in the back pocket, phone numbers on sticky notes, profit calculated "roughly, probably, let me see."
+      </p>
+      <p>
+        She's brilliant at the craft part. The business part was a stack of paper held together by coffee rings and hope. So I built her an app — something that fit on her phone, didn't need sign-up, didn't charge monthly, didn't pretend to be SAP. Something that a maker would actually use.
+      </p>
+      <p>
+        Crafty Planner is that app, now polished up for every other maker out there with a purse calendar or a kitchen-table spreadsheet. If that's you — this is for you.
+      </p>
+      <div class="story-sig" style="text-align: center; margin-top: 36px;">— Ty M.
+        <span class="story-sig-title">Developer · Brother · Fellow procrastinator</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BUILT IN PUBLIC ─── -->
+<section class="section public">
+  <div class="container reveal">
+    <div class="section-eyebrow">Built in public</div>
+    <h2 class="section-title" style="margin-left: auto; margin-right: auto; text-align:center;">One developer. <em>Open work.</em></h2>
+    <p class="section-lead" style="margin-left: auto; margin-right: auto; text-align:center;">
+      No VC round, no growth hacks, no dark patterns — and no six-month release cycle. The whole app lives in a single file, so when a maker asks for something, it can ship in days, not quarters.
+    </p>
+    <div class="public-stats">
+      <div class="public-stat">
+        <div class="public-stat-num">1</div>
+        <div class="public-stat-label">Developer shipping updates</div>
+      </div>
+      <div class="public-stat">
+        <div class="public-stat-num">Days</div>
+        <div class="public-stat-label">From feedback to live</div>
+      </div>
+      <div class="public-stat">
+        <div class="public-stat-num">$3.99</div>
+        <div class="public-stat-label">Max you'll ever pay / month</div>
+      </div>
+    </div>
+    <a href="https://github.com/tymckinney2222" class="public-link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      See the GitHub
+    </a>
+  </div>
+</section>
+
+<!-- ─── EARLY INVITE ─── -->
+<section class="invite">
+  <div class="container">
+    <div class="section-eyebrow">Help shape what's next</div>
+    <h2>Be one of the first, and <em>help me build this thing right.</em></h2>
+    <p>
+      Crafty Planner is still early. Every feature has been requested, every bug has been caught, and every weird edge-case has been fixed by a real person using it. Come be one of them — your feedback shapes what gets built next.
+    </p>
+    <a href="https://play.google.com/store/apps/details?id=com.craftyplanner.app" class="btn-play">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3.609 1.814L13.792 12 3.61 22.186c-.375-.31-.624-.78-.624-1.31V3.124c0-.53.25-1 .624-1.31zm10.89 10.186l2.684 2.684-9.916 5.743L14.5 12zM6.267 1.573l9.916 5.743-2.684 2.684-9.916-5.743zM20.16 10.81c.625.36.625 1.67 0 2.03l-2.793 1.617L14.5 12l2.867-2.457z"/>
+      </svg>
+      <span>
+        <span class="btn-sub">Get it on</span>
+        <span class="btn-main">Google Play</span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="section faq" id="faq">
+  <div class="container reveal">
+    <div class="section-eyebrow">Straight answers</div>
+    <h2 class="section-title">Frequently asked questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">Is it really free?
+          <span class="faq-toggle"></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Yes, genuinely. The free tier covers 5 orders, 5 customers, 5 products, and 5 expenses — enough to fully test drive every part of the app. The price calculator, CSV exports, and calendar are free forever. Pro ($3.99/mo) unlocks unlimited tracking plus AI features like the receipt scanner.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Will it work for my platform?
+          <span class="faq-toggle"></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Orders can be tagged by platform — Etsy, eBay, Facebook, In-Person, Website, or Other. Whether you sell on one platform or five, it handles it.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is my data safe?
+          <span class="faq-toggle"></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">All data lives on your phone by default — I literally can't see it. If you upgrade to Pro and turn on Cloud Sync, your data is backed up to your own Google account (not mine). You own your data, always.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need an iPhone?
+          <span class="faq-toggle"></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Android only right now. An iOS version isn't planned for the immediate future — I'm one person, and doing one platform well comes before doing two platforms half-baked.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How is this different from Craftybase or Paper+Spark?
+          <span class="faq-toggle"></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Those tools are powerful but expensive — $19–$39/mo and built for people who're already running a real operation. Crafty Planner is for the earlier stage: the part where your business still lives on a purse calendar, and you need something that meets you where you are.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I cancel anytime?
+          <span class="faq-toggle"></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Subscriptions are handled by Google Play — cancel from Play Store → Subscriptions anytime. You keep Pro access through the end of your billing period.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="nav-logo">
+          <span class="nav-logo-icon">📋</span>
+          Crafty Planner
+        </div>
+        <p>A maker-built, one-person-made app for tracking handmade business on your phone. No spreadsheets. No laptop. No monthly anxiety.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://play.google.com/store/apps/details?id=com.craftyplanner.app">Install</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>The maker</h4>
+        <ul>
+          <li><a href="https://github.com/tymckinney2222">GitHub</a></li>
+          <li><a href="#story">Story</a></li>
+          <li><a href="mailto:tyriahappstudios@gmail.com">Get in touch</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Crafty Planner. Made in Loveland, Colorado.</div>
+      <div>Not affiliated with Etsy, eBay, or any platform.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav shadow on scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  });
+
+  // FAQ toggle
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ─── CAROUSEL ─── */
+  (function initCarousel(){
+    const track = document.getElementById('carouselTrack');
+    const prev = document.getElementById('carouselPrev');
+    const next = document.getElementById('carouselNext');
+    const dots = document.getElementById('carouselDots');
+    if (!track) return;
+
+    const cards = track.querySelectorAll('.carousel-card');
+    let index = 0;
+
+    // Build dots
+    cards.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'carousel-dot';
+      d.setAttribute('aria-label', 'Go to screen ' + (i + 1));
+      d.addEventListener('click', () => go(i));
+      dots.appendChild(d);
+    });
+    const dotEls = dots.querySelectorAll('.carousel-dot');
+
+    function go(i) {
+      index = Math.max(0, Math.min(cards.length - 1, i));
+      // Card is 290px wide + 24px gap = 314px. Center the active one.
+      const viewportWidth = track.parentElement.offsetWidth;
+      const cardTotal = 290 + 24;
+      const offset = (viewportWidth / 2) - (290 / 2) - (index * cardTotal);
+      track.style.transform = 'translateX(' + offset + 'px)';
+
+      cards.forEach((c, ci) => c.classList.toggle('active', ci === index));
+      dotEls.forEach((d, di) => d.classList.toggle('active', di === index));
+    }
+
+    prev.addEventListener('click', () => go(index - 1));
+    next.addEventListener('click', () => go(index + 1));
+
+    // Keyboard navigation when focused anywhere on the carousel
+    document.getElementById('carousel').addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') go(index - 1);
+      if (e.key === 'ArrowRight') go(index + 1);
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) go(index + 1);
+        else go(index - 1);
+      }
+    }, { passive: true });
+
+    // Also let users click a non-active card to jump to it
+    cards.forEach((c, ci) => {
+      c.addEventListener('click', () => { if (ci !== index) go(ci); });
+    });
+
+    // Initialize and re-align on resize
+    go(0);
+    window.addEventListener('resize', () => go(index));
+  })();
+</script>
+
+</body>
+</html>
